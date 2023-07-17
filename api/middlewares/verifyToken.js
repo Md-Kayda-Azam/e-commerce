@@ -19,7 +19,7 @@ const tokenVerify = (req, res, next) => {
       return next(createError("Invalid token", 400));
     }
 
-    const me = await User.findOne({ email: decode.email });
+    const me = await User.findOne({ email: decode.email }).select("-password");
 
     req.me = me;
 

@@ -3,7 +3,7 @@ import colors from "colors";
 import dotenv from "dotenv";
 import cors from "cors";
 import userRoute from "./routes/userRoute.js";
-import authRoute from "./routes/auth.js";
+import authRoute from "./routes/authRoute.js";
 import mongoDBConnect from "./config/db.js";
 import { errorHandle } from "./middlewares/errorHandler.js";
 
@@ -14,7 +14,12 @@ dotenv.config();
 /// middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 // static
 app.use(express.static("/api/public"));

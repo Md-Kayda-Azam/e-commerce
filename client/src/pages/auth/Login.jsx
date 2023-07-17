@@ -1,8 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/img/logo-white.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createToast } from "../../helpers/toast";
+import { setMessageEmpty } from "../../features/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../features/auth/authApiSlice";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const { error, message, user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -16,6 +23,35 @@ const Login = () => {
     }));
   };
 
+  // handle login submit
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    if (!input.email || !input.password) {
+      createToast("All fields are required", "error");
+    } else {
+      dispatch(loginUser(input));
+      setInput({
+        email: "",
+        password: "",
+      });
+    }
+  };
+  // validation
+  useEffect(() => {
+    if (error) {
+      createToast(error);
+      dispatch(setMessageEmpty());
+    }
+
+    if (message) {
+      createToast(message, "success");
+      dispatch(setMessageEmpty());
+    }
+
+    if (user) {
+      navigate("/");
+    }
+  }, [error, message, user]);
   return (
     <>
       <div className="main-wrapper login-body">
@@ -30,7 +66,7 @@ const Login = () => {
                   <h1>Login</h1>
                   <p className="account-subtitle">Access to our dashboard</p>
 
-                  <form>
+                  <form onSubmit={handleLoginSubmit}>
                     <div className="form-group">
                       <input
                         className="form-control"
