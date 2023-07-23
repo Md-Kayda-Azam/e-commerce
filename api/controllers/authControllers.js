@@ -138,3 +138,19 @@ export const register = async (req, res, next) => {
 export const loggedInUser = async (req, res, next) => {
   res.status(200).json(req.me);
 };
+/**
+ * @DESC MAke hash
+ * @ROUTE /api/v1/auth/register
+ * @method POST
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns
+ */
+export const makeHash = async (req, res, next) => {
+  const { password } = req.body;
+
+  const hashPassword = await bcrypt.hash(password, 10);
+
+  res.status(200).json({ hashPassword });
+};

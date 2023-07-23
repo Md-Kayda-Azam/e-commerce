@@ -1,11 +1,12 @@
 import logo from "../../assets/img/logo.png";
-import avater from "../../assets/img/profiles/avatar-01.jpg";
 import doc from "../../assets/img/patients/patient1.jpg";
 import { useDispatch } from "react-redux";
 import { logOutUser } from "../../features/auth/authApiSlice";
+import useAuthUser from "../../hooks/useAuthUser";
+
 const Header = () => {
   const dispatch = useDispatch();
-
+  const { user } = useAuthUser();
   // handle user logout
   const handleUserLogOut = (e) => {
     e.preventDefault();
@@ -186,7 +187,11 @@ const Header = () => {
               <span className="user-img">
                 <img
                   className="rounded-circle"
-                  src={avater}
+                  src={
+                    user?.photo
+                      ? user?.photo
+                      : "https://img.freepik.com/premium-vector/young-smiling-man-avatar-man-with-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-3d-vector-people-character-illustration-cartoon-minimal-style_365941-860.jpg?w=2000"
+                  }
                   width="31"
                   alt="Ryan Taylor"
                 />
@@ -196,14 +201,18 @@ const Header = () => {
               <div className="user-header">
                 <div className="avatar avatar-sm">
                   <img
-                    src={avater}
-                    alt="User Image"
+                    src={
+                      user?.photo
+                        ? user?.photo
+                        : "https://img.freepik.com/premium-vector/young-smiling-man-avatar-man-with-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-3d-vector-people-character-illustration-cartoon-minimal-style_365941-860.jpg?w=2000"
+                    }
+                    alt={user?.name}
                     className="avatar-img rounded-circle"
                   />
                 </div>
                 <div className="user-text">
-                  <h6>Ryan Taylor</h6>
-                  <p className="text-muted mb-0">Administrator</p>
+                  <h6>{user?.name}</h6>
+                  <p className="text-muted mb-0">{user?.role}</p>
                 </div>
               </div>
               <a className="dropdown-item" href="profile.html">

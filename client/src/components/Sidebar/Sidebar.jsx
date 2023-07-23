@@ -20,6 +20,16 @@ const Sidebar = () => {
                   <i className="fe fe-users"></i> <span>Users</span>
                 </Link>
               </li>
+              <li className="">
+                <Link to="/roles">
+                  <i className="fa fa-anchor"></i> <span>Roles</span>
+                </Link>
+              </li>
+              <li className="">
+                <Link to="/permission">
+                  <i className="fa fa-lock"></i> <span>Permission</span>
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

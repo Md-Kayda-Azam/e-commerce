@@ -1,11 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createUser, logOutUser, loginUser } from "./authApiSlice";
+import {
+  createUser,
+  getLoginUser,
+  logOutUser,
+  loginUser,
+} from "./authApiSlice";
 
 // create auth slice
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null,
+    user: localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user"))
+      : null,
     message: null,
     error: null,
   },
@@ -13,6 +20,11 @@ const authSlice = createSlice({
     setMessageEmpty: (state) => {
       state.message = null;
       state.error = null;
+    },
+    setLogout: (state) => {
+      state.message = null;
+      state.error = null;
+      state.user = null;
     },
   },
   extraReducers: (builder) => {
@@ -29,6 +41,7 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.message = action.payload.message;
         state.user = action.payload.user;
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
       })
       .addCase(logOutUser.rejected, (state, action) => {
         state.error = action.error.message;
@@ -36,14 +49,22 @@ const authSlice = createSlice({
       .addCase(logOutUser.fulfilled, (state, action) => {
         state.message = action.payload.message;
         state.user = null;
+        localStorage.removeItem("user");
+      })
+      .addCase(getLoginUser.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.user = null;
+      })
+      .addCase(getLoginUser.fulfilled, (state, action) => {
+        state.user = action.payload;
       });
   },
 });
 
 // selectors
-
+export const getAuthData = (state) => state.auth;
 // actions
-export const { setMessageEmpty } = authSlice.actions;
+export const { setMessageEmpty, setLogout } = authSlice.actions;
 // export default
 
 export default authSlice.reducer;

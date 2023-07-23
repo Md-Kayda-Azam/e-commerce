@@ -4,12 +4,14 @@ import {
   logOut,
   register,
   loggedInUser,
+  makeHash,
 } from "../controllers/authControllers.js";
 import tokenVerify from "../middlewares/verifyToken.js";
 
 const routes = express.Router();
 routes.post("/login", login);
 routes.post("/logout", logOut);
+routes.post("/hash", makeHash);
 routes.post("/register", register);
 
 routes.get("/me", tokenVerify, loggedInUser);

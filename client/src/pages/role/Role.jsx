@@ -4,13 +4,13 @@ import ModalPopup from "../../components/ModalPopup/ModalPopup";
 import DataTables from "datatables.net-dt";
 import PageHeader from "../../components/PageHeader/PageHeader";
 
-const Users = () => {
+const Role = () => {
   useEffect(() => {
     new DataTables(".datatable");
   });
   return (
     <>
-      <PageHeader title="Users" />
+      <PageHeader title="Roles" />
 
       <ModalPopup target="userModalPopup">
         <p>
@@ -36,7 +36,7 @@ const Users = () => {
             data-target="#userModalPopup"
             data-toggle="modal"
           >
-            Add new user
+            Add new role
           </button>
           <br />
           <br />
@@ -384,4 +384,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Role;
