@@ -10,12 +10,9 @@ import bcrypt from "bcrypt";
  */
 export const getAllPermissions = async (req, res, next) => {
   try {
-    const data = await Permission.find();
+    const permission = await Permission.find();
 
-    res.status(200).json({
-      Permissions: data,
-      message: "All data get successful",
-    });
+    res.status(200).json(permission);
   } catch (error) {
     next(createError("Data can not all get", 400));
   }
@@ -39,15 +36,14 @@ export const createPermission = async (req, res, next) => {
       next(createError("Permission already axist"));
     }
     // create data
-    const data = await Permission.create({
+    const permission = await Permission.create({
       name,
       slug: slugCreate(name),
     });
 
-    res.status(200).json({
-      Permission: data,
-      message: "Create data successful",
-    });
+    res
+      .status(200)
+      .json({ permission, message: "permission data create successful" });
   } catch (error) {
     next(createError("Create data can not Permission", 400));
   }
@@ -61,16 +57,13 @@ export const singlePermission = async (req, res, next) => {
   try {
     const { id } = req.params;
     const permission = await Permission.findById(id);
-    res.status(200).json({
-      permission,
-      message: "Single data successful",
-    });
+    res.status(200).json(permission);
   } catch (error) {
     next(createError("Single data not found", 400));
   }
 };
 /**
- * delete product brand
+ * delete permission
  * @param {*} req
  * @param {*} res
  */
@@ -80,16 +73,15 @@ export const deletePermission = async (req, res, next) => {
 
     const permission = await Permission.findByIdAndDelete(id);
 
-    res.status(200).json({
-      permission,
-      message: "Permission delete data successful",
-    });
+    res
+      .status(200)
+      .json({ permission, message: "Permission  deleted successfull" });
   } catch (error) {
     next(createError("Permission delete not found", 400));
   }
 };
 /**
- * update product brand
+ * update permission
  * @param {*} req
  * @param {*} res
  */
@@ -108,10 +100,31 @@ export const updatedPermission = async (req, res, next) => {
       { new: true }
     );
 
-    res.status(200).json({
-      permission,
-      message: "Permission delete data successful",
-    });
+    res.status(200).json(permission);
+  } catch (error) {
+    next(createError("Permission update not found", 400));
+  }
+};
+/**
+ * status Update Permission
+ * @param {*} req
+ * @param {*} res
+ */
+export const statusUpdatePermission = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // update Permission data
+    const permission = await Permission.findByIdAndUpdate(
+      id,
+      {
+        status: !status,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({ permission, message: "Status updated successful" });
   } catch (error) {
     next(createError("Permission update not found", 400));
   }

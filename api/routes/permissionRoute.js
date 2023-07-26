@@ -6,6 +6,7 @@ import {
   getAllPermissions,
   singlePermission,
   updatedPermission,
+  statusUpdatePermission,
 } from "../controllers/permissionControllers.js";
 
 const router = express.Router();
@@ -20,5 +21,6 @@ router.get("/:id", singlePermission);
 router.delete("/:id", deletePermission);
 router.put("/:id", updatedPermission);
 router.patch("/:id", updatedPermission);
+router.post("/:id", statusUpdatePermission);
 
 export default router;

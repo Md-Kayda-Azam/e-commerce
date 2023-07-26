@@ -1,32 +1,95 @@
 import { useEffect } from "react";
-import doctor from "../../assets/img/doctors/doctor-thumb-01.jpg";
 import ModalPopup from "../../components/ModalPopup/ModalPopup";
 import DataTables from "datatables.net-dt";
 import PageHeader from "../../components/PageHeader/PageHeader";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createPermission,
+  deletePermission,
+  updatePermissionStatusData,
+} from "../../features/user/userApiSlice";
+import {
+  getAllPermissionData,
+  setMessageEmpty,
+} from "../../features/user/userSlice";
+import { createToast } from "../../helpers/toast";
+import swal from "sweetalert";
+import { timeAgo } from "../../helpers/timeAgo";
+import useFormFrilds from "../../hooks/inputFeildsForm";
 
 const Permission = () => {
+  const dispatch = useDispatch();
+  const { error, message, permission } = useSelector(getAllPermissionData);
+
+  const [input, handleInputChange] = useFormFrilds({
+    name: "",
+  });
+
+  // hamdle form submit
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    dispatch(createPermission(input));
+  };
+  // delete permission data
+  const handleDeletePermission = (id) => {
+    swal({
+      title: "Sure",
+      text: "Are you sure?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        dispatch(deletePermission(id));
+      } else {
+        swal("Your imaginary file is safe!");
+      }
+    });
+  };
+  // validation
+  useEffect(() => {
+    if (error) {
+      createToast(error);
+      dispatch(setMessageEmpty());
+    }
+
+    if (message) {
+      createToast(message, "success");
+      dispatch(setMessageEmpty());
+    }
+  }, [error, message, dispatch]);
+
+  /// status update
+  const handleStatusUpdate = (id, status) => {
+    dispatch(updatePermissionStatusData({ id, status }));
+  };
+
   useEffect(() => {
     new DataTables(".datatable");
   });
+
   return (
     <>
       <PageHeader title="Permission" />
 
       <ModalPopup target="userModalPopup">
-        <p>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Minima,
-          eveniet quam. Explicabo quae sit placeat enim iusto similique? Vitae
-          laboriosam, totam mollitia at eius nobis voluptates quibusdam error
-          dolores, atque temporibus ratione! Esse deleniti, soluta doloremque
-          autem, quod ipsam nostrum aliquid voluptatibus, dolore neque officiis
-          velit natus et ullam tempore nemo explicabo! Voluptate atque
-          consequatur non dolor quod temporibus mollitia earum ipsam facere
-          quae, repellat perferendis, rerum sunt expedita accusamus iusto dicta
-          eligendi delectus adipisci corporis quos. Excepturi vel cum aperiam
-          reiciendis neque dignissimos ipsum eos iure mollitia. Facilis
-          consectetur animi autem aut iste accusantium molestiae amet quos ea
-          rerum!
-        </p>
+        <form onSubmit={handleFormSubmit}>
+          <div className="my-3">
+            <label htmlFor="">Permission Name</label>
+            <input
+              type="text"
+              className="form-control"
+              name="name"
+              value={input.name}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="my-3">
+            <button className="btn btn-primary btn-block" type="submit">
+              Add new permission
+            </button>
+          </div>
+        </form>
       </ModalPopup>
 
       <div className="row">
@@ -43,338 +106,60 @@ const Permission = () => {
           <div className="card card-table">
             <div className="card-body">
               <div className="table-responsive">
-                <table className="datatable table table-hover table-center mb-0">
-                  <thead>
-                    <tr>
-                      <th>Doctor Name</th>
-                      <th>Speciality</th>
-                      <th>Patient Name</th>
-                      <th>Apointment Time</th>
-                      <th>Status</th>
-                      <th className="text-right">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <h2 className="table-avatar">
-                          <a
-                            href="profile.html"
-                            className="avatar avatar-sm mr-2"
-                          >
-                            <img
-                              className="avatar-img rounded-circle"
-                              src={doctor}
-                              alt="User Image"
-                            />
-                          </a>
-                          <a href="profile.html">Dr. Ruby Perrin</a>
-                        </h2>
-                      </td>
-                      <td>Dental</td>
-                      <td>
-                        <h2 className="table-avatar">
-                          <a
-                            href="profile.html"
-                            className="avatar avatar-sm mr-2"
-                          >
-                            <img
-                              className="avatar-img rounded-circle"
-                              src={doctor}
-                              alt="User Image"
-                            />
-                          </a>
-                          <a href="profile.html">Charlene Reed </a>
-                        </h2>
-                      </td>
-                      <td>
-                        9 Nov 2019{" "}
-                        <span className="text-primary d-block">
-                          11.00 AM - 11.15 AM
-                        </span>
-                      </td>
-                      <td>
-                        <div className="status-toggle">
-                          <input
-                            type="checkbox"
-                            id="status_1"
-                            className="check"
-                            checked
-                          />
-                          <label htmlFor="status_1" className="checktoggle">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <td className="text-right">$200.00</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <h2 className="table-avatar">
-                          <a
-                            href="profile.html"
-                            className="avatar avatar-sm mr-2"
-                          >
-                            <img
-                              className="avatar-img rounded-circle"
-                              src={doctor}
-                              alt="User Image"
-                            />
-                          </a>
-                          <a href="profile.html">Dr. Ruby Perrin</a>
-                        </h2>
-                      </td>
-                      <td>Dental</td>
-                      <td>
-                        <h2 className="table-avatar">
-                          <a
-                            href="profile.html"
-                            className="avatar avatar-sm mr-2"
-                          >
-                            <img
-                              className="avatar-img rounded-circle"
-                              src={doctor}
-                              alt="User Image"
-                            />
-                          </a>
-                          <a href="profile.html">Charlene Reed </a>
-                        </h2>
-                      </td>
-                      <td>
-                        9 Nov 2019{" "}
-                        <span className="text-primary d-block">
-                          11.00 AM - 11.15 AM
-                        </span>
-                      </td>
-                      <td>
-                        <div className="status-toggle">
-                          <input
-                            type="checkbox"
-                            id="status_1"
-                            className="check"
-                            checked
-                          />
-                          <label htmlFor="status_1" className="checktoggle">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <td className="text-right">$200.00</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <h2 className="table-avatar">
-                          <a
-                            href="profile.html"
-                            className="avatar avatar-sm mr-2"
-                          >
-                            <img
-                              className="avatar-img rounded-circle"
-                              src={doctor}
-                              alt="User Image"
-                            />
-                          </a>
-                          <a href="profile.html">Dr. Ruby Perrin</a>
-                        </h2>
-                      </td>
-                      <td>Dental</td>
-                      <td>
-                        <h2 className="table-avatar">
-                          <a
-                            href="profile.html"
-                            className="avatar avatar-sm mr-2"
-                          >
-                            <img
-                              className="avatar-img rounded-circle"
-                              src={doctor}
-                              alt="User Image"
-                            />
-                          </a>
-                          <a href="profile.html">Charlene Reed </a>
-                        </h2>
-                      </td>
-                      <td>
-                        9 Nov 2019{" "}
-                        <span className="text-primary d-block">
-                          11.00 AM - 11.15 AM
-                        </span>
-                      </td>
-                      <td>
-                        <div className="status-toggle">
-                          <input
-                            type="checkbox"
-                            id="status_1"
-                            className="check"
-                            checked
-                          />
-                          <label htmlFor="status_1" className="checktoggle">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <td className="text-right">$200.00</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <h2 className="table-avatar">
-                          <a
-                            href="profile.html"
-                            className="avatar avatar-sm mr-2"
-                          >
-                            <img
-                              className="avatar-img rounded-circle"
-                              src={doctor}
-                              alt="User Image"
-                            />
-                          </a>
-                          <a href="profile.html">Dr. Ruby Perrin</a>
-                        </h2>
-                      </td>
-                      <td>Dental</td>
-                      <td>
-                        <h2 className="table-avatar">
-                          <a
-                            href="profile.html"
-                            className="avatar avatar-sm mr-2"
-                          >
-                            <img
-                              className="avatar-img rounded-circle"
-                              src={doctor}
-                              alt="User Image"
-                            />
-                          </a>
-                          <a href="profile.html">Charlene Reed </a>
-                        </h2>
-                      </td>
-                      <td>
-                        9 Nov 2019{" "}
-                        <span className="text-primary d-block">
-                          11.00 AM - 11.15 AM
-                        </span>
-                      </td>
-                      <td>
-                        <div className="status-toggle">
-                          <input
-                            type="checkbox"
-                            id="status_1"
-                            className="check"
-                            checked
-                          />
-                          <label htmlFor="status_1" className="checktoggle">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <td className="text-right">$200.00</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <h2 className="table-avatar">
-                          <a
-                            href="profile.html"
-                            className="avatar avatar-sm mr-2"
-                          >
-                            <img
-                              className="avatar-img rounded-circle"
-                              src={doctor}
-                              alt="User Image"
-                            />
-                          </a>
-                          <a href="profile.html">Dr. Ruby Perrin</a>
-                        </h2>
-                      </td>
-                      <td>Dental</td>
-                      <td>
-                        <h2 className="table-avatar">
-                          <a
-                            href="profile.html"
-                            className="avatar avatar-sm mr-2"
-                          >
-                            <img
-                              className="avatar-img rounded-circle"
-                              src={doctor}
-                              alt="User Image"
-                            />
-                          </a>
-                          <a href="profile.html">Charlene Reed </a>
-                        </h2>
-                      </td>
-                      <td>
-                        9 Nov 2019{" "}
-                        <span className="text-primary d-block">
-                          11.00 AM - 11.15 AM
-                        </span>
-                      </td>
-                      <td>
-                        <div className="status-toggle">
-                          <input
-                            type="checkbox"
-                            id="status_1"
-                            className="check"
-                            checked
-                          />
-                          <label htmlFor="status_1" className="checktoggle">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <td className="text-right">$200.00</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <h2 className="table-avatar">
-                          <a
-                            href="profile.html"
-                            className="avatar avatar-sm mr-2"
-                          >
-                            <img
-                              className="avatar-img rounded-circle"
-                              src={doctor}
-                              alt="User Image"
-                            />
-                          </a>
-                          <a href="profile.html">Dr. Ruby Perrin</a>
-                        </h2>
-                      </td>
-                      <td>Dental</td>
-                      <td>
-                        <h2 className="table-avatar">
-                          <a
-                            href="profile.html"
-                            className="avatar avatar-sm mr-2"
-                          >
-                            <img
-                              className="avatar-img rounded-circle"
-                              src={doctor}
-                              alt="User Image"
-                            />
-                          </a>
-                          <a href="profile.html">Charlene Reed </a>
-                        </h2>
-                      </td>
-                      <td>
-                        9 Nov 2019{" "}
-                        <span className="text-primary d-block">
-                          11.00 AM - 11.15 AM
-                        </span>
-                      </td>
-                      <td>
-                        <div className="status-toggle">
-                          <input
-                            type="checkbox"
-                            id="status_1"
-                            className="check"
-                            checked
-                          />
-                          <label htmlFor="status_1" className="checktoggle">
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <td className="text-right">$200.00</td>
-                    </tr>
-                  </tbody>
-                </table>
+                {permission && (
+                  <table className="datatable table table-hover table-center mb-0">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Slug</th>
+                        <th>Created At</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...permission].reverse().map((item, index) => {
+                        return (
+                          <tr key={index}>
+                            <td>{index + 1}</td>
+                            <td>{item.name}</td>
+                            <td>{item.slug}</td>
+                            <td>{timeAgo(new Date(item.createdAt))}</td>
+                            <td>
+                              <div className="status-toggle">
+                                <input
+                                  type="checkbox"
+                                  id="status_1"
+                                  className="check"
+                                  checked={item.status ? true : false}
+                                />
+                                <label
+                                  onClick={() =>
+                                    handleStatusUpdate(item._id, item.status)
+                                  }
+                                  htmlFor="status_1"
+                                  className="checktoggle"
+                                >
+                                  checkbox
+                                </label>
+                              </div>
+                            </td>
+
+                            <td className="text-right">
+                              <button
+                                className="btn btn-small btn-danger"
+                                onClick={() => handleDeletePermission(item._id)}
+                              >
+                                <i className="fa fa-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           </div>

@@ -10,12 +10,9 @@ import bcrypt from "bcrypt";
  */
 export const getAllRoles = async (req, res, next) => {
   try {
-    const data = await Role.find();
+    const roles = await Role.find();
 
-    res.status(200).json({
-      Roles: data,
-      message: "All data get successful",
-    });
+    res.status(200).json(roles);
   } catch (error) {
     next(createError("Data can not all get", 400));
   }
@@ -27,7 +24,7 @@ export const getAllRoles = async (req, res, next) => {
  */
 export const createRole = async (req, res, next) => {
   try {
-    const { name } = req.body;
+    const { name, permissions } = req.body;
 
     if (!name) {
       next(createError("All fields are required"));
@@ -39,14 +36,15 @@ export const createRole = async (req, res, next) => {
       next(createError("Role already axist"));
     }
     // create data
-    const data = await Role.create({
+    const role = await Role.create({
       name,
       slug: slugCreate(name),
+      permissions: [...permissions],
     });
 
     res.status(200).json({
-      Role: data,
-      message: "Create data successful",
+      role,
+      message: "Role created successful",
     });
   } catch (error) {
     next(createError("Create data can not Role", 400));

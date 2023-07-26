@@ -51,7 +51,7 @@ const Login = () => {
     if (user) {
       navigate("/");
     }
-  }, [error, message, user]);
+  }, [error, message, user, dispatch, navigate]);
   return (
     <>
       <div className="main-wrapper login-body">

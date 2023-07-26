@@ -2,6 +2,7 @@ import Layout from "../components/Layout/Layout";
 import Users from "../pages/Users/Users";
 import AdminDashboard from "../pages/dashboard/AdminDashboard";
 import Permission from "../pages/permission/Permission";
+import Profile from "../pages/profile/Profile";
 import Role from "../pages/role/Role";
 import PrivateGard from "./PrivateGard";
 
@@ -29,6 +30,10 @@ const privateRoute = [
           {
             path: "/permission",
             element: <Permission />,
+          },
+          {
+            path: "/profile",
+            element: <Profile />,
           },
         ],
       },

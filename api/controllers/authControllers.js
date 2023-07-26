@@ -127,7 +127,7 @@ export const register = async (req, res, next) => {
   }
 };
 /**
- * @DESC Register User
+ * @DESC loggedIN User
  * @ROUTE /api/v1/auth/register
  * @method POST
  * @param {*} req

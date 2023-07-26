@@ -35,6 +35,10 @@ const userSchama = mongoose.Schema(
       enum: ["Male", "Female", "undefined"],
       default: "undefined",
     },
+    isActivate: {
+      type: Boolean,
+      default: false,
+    },
     status: {
       type: Boolean,
       default: true,
