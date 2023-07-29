@@ -9,8 +9,13 @@ import {
 } from "../../features/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { createToast } from "../../helpers/toast";
-import { createRole } from "../../features/user/userApiSlice";
+import {
+  createRole,
+  deleteRole,
+  updateRoleStatusData,
+} from "../../features/user/userApiSlice";
 import { timeAgo } from "../../helpers/timeAgo";
+import swal from "sweetalert";
 
 const Role = () => {
   const dispatch = useDispatch();
@@ -23,6 +28,7 @@ const Role = () => {
   });
 
   const [selected, setSelected] = useState([]);
+  const [roleEditData, setRoleditData] = useState({});
 
   const handleCheckBoxChange = (e) => {
     const val = e.target.value;
@@ -44,9 +50,39 @@ const Role = () => {
         permissions: [...selected],
       })
     );
-    resetForm();
+    resetForm({
+      name: "",
+    });
     setSelected([]);
   };
+
+  // delete role data
+  const handleDeleteRole = (id) => {
+    swal({
+      title: "Sure",
+      text: "Are you sure?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        dispatch(deleteRole(id));
+      } else {
+        swal("Your imaginary file is safe!");
+      }
+    });
+  };
+  /// status update
+  const handleStatusUpdate = (id, status) => {
+    dispatch(updateRoleStatusData({ id, status }));
+  };
+
+  // handle edit role
+  const handleEdit = (id) => {
+    const data = role.find((data) => data._id == id);
+    setRoleditData(data);
+  };
+
   // validation
   useEffect(() => {
     if (error) {
@@ -101,6 +137,41 @@ const Role = () => {
           </div>
         </form>
       </ModalPopup>
+      <ModalPopup target="roleModalPopup">
+        <form onSubmit={handleSubmitForm}>
+          <div className="my-3">
+            <label htmlFor="">Role Name</label>
+            <input
+              type="text"
+              className="form-control"
+              name="name"
+              value={roleEditData.name}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="my-3">
+            <label htmlFor="">Permissions</label>
+            {permission?.map((item, index) => {
+              return (
+                <label className="d-block" key={index}>
+                  <input
+                    type="checkbox"
+                    value={item.name}
+                    checked={roleEditData?.permissions?.includes(item.name)}
+                    onChange={handleCheckBoxChange}
+                  />{" "}
+                  {item.name}
+                </label>
+              );
+            })}
+          </div>
+          <div className="my-3">
+            <button className="btn btn-primary btn-block" type="submit">
+              Add new permission
+            </button>
+          </div>
+        </form>
+      </ModalPopup>
 
       <div className="row">
         <div className="col-md-12">
@@ -121,7 +192,7 @@ const Role = () => {
                     <thead>
                       <tr>
                         <th>#</th>
-                        <th>Role name</th>
+                        <th>Name</th>
                         <th>Slug</th>
                         <th>Permission</th>
                         <th>CreatedAt</th>
@@ -136,7 +207,13 @@ const Role = () => {
                             <td style={{ width: "50px" }}>{index + 1}</td>
                             <td>{item.name}</td>
                             <td>{item.slug}</td>
-                            <td>Permission</td>
+                            <td>
+                              <ul>
+                                {item.permissions.map((per, index) => {
+                                  return <li key={index}>{per}</li>;
+                                })}
+                              </ul>
+                            </td>
                             <td>{timeAgo(new Date(item.createdAt))}</td>
                             <td>
                               <div className="status-toggle">
@@ -144,9 +221,12 @@ const Role = () => {
                                   type="checkbox"
                                   id="status_1"
                                   className="check"
-                                  checked
+                                  checked={item.status ? true : false}
                                 />
                                 <label
+                                  onClick={() =>
+                                    handleStatusUpdate(item._id, item.status)
+                                  }
                                   htmlFor="status_1"
                                   className="checktoggle"
                                 >
@@ -156,7 +236,18 @@ const Role = () => {
                             </td>
 
                             <td className="text-right">
-                              <button className="btn btn-small btn-danger">
+                              <button
+                                className="btn btn-small btn-danger mr-1"
+                                data-target="#roleModalPopup"
+                                data-toggle="modal"
+                                onClick={() => handleEdit(item._id)}
+                              >
+                                <i className="fa fa-edit"></i>
+                              </button>
+                              <button
+                                className="btn btn-small btn-warning"
+                                onClick={() => handleDeleteRole(item._id)}
+                              >
                                 <i className="fa fa-trash"></i>
                               </button>
                             </td>

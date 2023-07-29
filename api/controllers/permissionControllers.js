@@ -11,8 +11,9 @@ import bcrypt from "bcrypt";
 export const getAllPermissions = async (req, res, next) => {
   try {
     const permission = await Permission.find();
-
-    res.status(200).json(permission);
+    if (permission.length > 0) {
+      res.status(200).json(permission);
+    }
   } catch (error) {
     next(createError("Data can not all get", 400));
   }

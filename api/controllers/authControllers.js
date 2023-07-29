@@ -2,6 +2,8 @@ import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import { createError } from "../utils/createError.js";
 import bcrypt from "bcrypt";
+import { isEmail } from "../helper/validate.js";
+import { sendActivationLink } from "../helper/sendMail.js";
 
 /**
  * @DESC Login User
@@ -19,7 +21,9 @@ export const login = async (req, res, next) => {
     if (!email || !password) {
       return next(createError("All fields are required", 400));
     }
-
+    if (!isEmail(email)) {
+      return next(createError("Invalid Email Address", 400));
+    }
     // check user email
     const loginUser = await User.findOne({ email });
 
@@ -101,11 +105,14 @@ export const register = async (req, res, next) => {
       next(createError("All fields are required"));
     }
 
+    if (!isEmail(email)) {
+      return next(createError("Invalid Email Address", 400));
+    }
     // check user email
     const userEmailCheck = await User.findOne({ email });
 
     if (userEmailCheck) {
-      next(createError("Email already axist"));
+      return next(createError("Email already axist"));
     } else {
       // password hash
       const hashPassword = await bcrypt.hash(password, 10);
@@ -115,6 +122,12 @@ export const register = async (req, res, next) => {
         name,
         email,
         password: hashPassword,
+      });
+
+      sendActivationLink(user.email, {
+        name: user.name,
+        link: "",
+        email: email,
       });
 
       res.status(200).json({

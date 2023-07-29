@@ -6,6 +6,7 @@ import {
   getAllRoles,
   singleRole,
   updatedRole,
+  statusUpdateRole,
 } from "../controllers/roleControllers.js";
 
 const router = express.Router();
@@ -20,5 +21,6 @@ router.get("/:id", singleRole);
 router.delete("/:id", deleteRole);
 router.put("/:id", updatedRole);
 router.patch("/:id", updatedRole);
+router.post("/:id", statusUpdateRole);
 
 export default router;

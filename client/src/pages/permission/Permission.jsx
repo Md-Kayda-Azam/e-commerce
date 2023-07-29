@@ -21,7 +21,7 @@ const Permission = () => {
   const dispatch = useDispatch();
   const { error, message, permission } = useSelector(getAllPermissionData);
 
-  const [input, handleInputChange] = useFormFrilds({
+  const [input, handleInputChange, resetForm] = useFormFrilds({
     name: "",
   });
 
@@ -29,6 +29,10 @@ const Permission = () => {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     dispatch(createPermission(input));
+
+    resetForm({
+      name: "",
+    });
   };
   // delete permission data
   const handleDeletePermission = (id) => {

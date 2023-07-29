@@ -11,8 +11,9 @@ import bcrypt from "bcrypt";
 export const getAllRoles = async (req, res, next) => {
   try {
     const roles = await Role.find();
-
-    res.status(200).json(roles);
+    if (roles.length > 0) {
+      res.status(200).json(roles);
+    }
   } catch (error) {
     next(createError("Data can not all get", 400));
   }
@@ -110,6 +111,30 @@ export const updatedRole = async (req, res, next) => {
       role,
       message: "Role delete data successful",
     });
+  } catch (error) {
+    next(createError("Role update not found", 400));
+  }
+};
+/**
+ * status Update Role
+ * @param {*} req
+ * @param {*} res
+ */
+export const statusUpdateRole = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // update Permission data
+    const role = await Role.findByIdAndUpdate(
+      id,
+      {
+        status: !status,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({ role, message: "Status updated successful" });
   } catch (error) {
     next(createError("Role update not found", 400));
   }
