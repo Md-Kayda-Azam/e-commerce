@@ -4,6 +4,7 @@ import { createError } from "../utils/createError.js";
 import bcrypt from "bcrypt";
 import { isEmail } from "../helper/validate.js";
 import { sendActivationLink } from "../helper/sendMail.js";
+import { createToken, tokenVerify } from "../helper/token.js";
 
 /**
  * @DESC Login User
@@ -25,7 +26,7 @@ export const login = async (req, res, next) => {
       return next(createError("Invalid Email Address", 400));
     }
     // check user email
-    const loginUser = await User.findOne({ email });
+    const loginUser = await User.findOne({ email }).populate("role");
 
     if (!loginUser) {
       return next(createError("Invalid email, please valid email submit", 400));
@@ -123,15 +124,30 @@ export const register = async (req, res, next) => {
         email,
         password: hashPassword,
       });
+      const populatedUser = await User.findById(user._id)
+        .populate("role")
+        .exec();
+      // create activation token
+      const activationToken = createToken({ id: user._id }, "30d");
 
       sendActivationLink(user.email, {
         name: user.name,
-        link: "",
+        link: `${
+          process.env.APP_URL + ":" + process.env.PORT
+        }/api/v1/auth/activate/${activationToken}`,
         email: email,
       });
 
+      res.cookie("accessToken", token, {
+        httpOnly: true,
+        secure: (process.env.APP_ENV = "Development" ? false : true),
+        sameSite: "strict",
+        Path: "/",
+        maxAge: 7 * 24 * 60 * 60 * 100,
+      });
+
       res.status(200).json({
-        user,
+        populatedUser,
         message: "Create data successful",
       });
     }
@@ -166,4 +182,37 @@ export const makeHash = async (req, res, next) => {
   const hashPassword = await bcrypt.hash(password, 10);
 
   res.status(200).json({ hashPassword });
+};
+/**
+ * @access public
+ * @route /api/user/account activate by email
+ * @method Get
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+export const activateAccount = async (req, res, next) => {
+  try {
+    // get token
+    const { token } = req.params;
+    // check token
+    if (!token) {
+      next(createError(400, "Invalid activation token"));
+    } else {
+      // verify token
+      const tokenData = tokenVerify(token);
+
+      const data = await User.findById(tokenData.id);
+
+      if (data.isActivate == true) {
+        next(createError(400, "Account already activate"));
+      } else {
+        await User.findByIdAndUpdate(tokenData.id, {
+          isActivate: true,
+        });
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
 };

@@ -19,9 +19,9 @@ const tokenVerify = (req, res, next) => {
         return res.status(400).json({ message: "Unauthorized" });
       }
 
-      const me = await User.findOne({ email: decode.email }).select(
-        "-password"
-      );
+      const me = await User.findOne({ email: decode.email })
+        .select("-password")
+        .populate("role");
       req.me = me;
       next();
     })

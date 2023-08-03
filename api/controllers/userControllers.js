@@ -1,3 +1,4 @@
+import { sendMail } from "../helper/sendMail.js";
 import User from "../models/User.js";
 import { createError } from "../utils/createError.js";
 import bcrypt from "bcrypt";
@@ -9,12 +10,11 @@ import bcrypt from "bcrypt";
  */
 export const getAllUsers = async (req, res, next) => {
   try {
-    const data = await User.find();
+    const users = await User.find().populate("role");
 
-    res.status(200).json({
-      users: data,
-      message: "All data get successful",
-    });
+    if (users.length > 0) {
+      res.status(200).json(users);
+    }
   } catch (error) {
     next(createError("Data can not all brand get", 400));
   }
@@ -26,17 +26,17 @@ export const getAllUsers = async (req, res, next) => {
  */
 export const createUser = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
-    if (!name || !email || !password) {
-      next(createError("All fields are required"));
+    if (!name || !email || !password || !role) {
+      return next(createError("All fields are required"));
     }
 
     // check user email
     const userEmailCheck = await User.findOne({ email });
 
     if (userEmailCheck) {
-      next(createError("Email already axist"));
+      return next(createError("Email already axist"));
     }
 
     // password hash
@@ -47,14 +47,24 @@ export const createUser = async (req, res, next) => {
       name,
       email,
       password: hashPassword,
+      role,
+    });
+
+    const populatedUser = await User.findById(data._id).populate("role").exec();
+    // send user assecc to email
+    sendMail({
+      to: email,
+      sub: "Account Access Info",
+      msg: `Your account login access is email : ${email} & password : ${password}`,
     });
 
     res.status(200).json({
-      user: data,
-      message: "Create data successful",
+      user: populatedUser,
+      message: `${name} user created successful`,
     });
   } catch (error) {
-    next(createError("Create data can not user", 400));
+    // next(createError("Create data can not user", 400));
+    console.log(error);
   }
 };
 /**
@@ -77,7 +87,7 @@ export const singleUsers = async (req, res, next) => {
   }
 };
 /**
- * delete product brand
+ * delete delete user
  * @param {*} req
  * @param {*} res
  */
@@ -96,14 +106,14 @@ export const deleteUser = async (req, res, next) => {
   }
 };
 /**
- * update product brand
+ * update  user
  * @param {*} req
  * @param {*} res
  */
 export const updatedUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     // password hash
     const hashPassword = await bcrypt.hash(password, 10);
@@ -115,15 +125,43 @@ export const updatedUser = async (req, res, next) => {
         name,
         email,
         password: hashPassword,
+        role,
       },
       { new: true }
-    );
+    ).populate("role");
 
     res.status(200).json({
       user,
-      message: "User delete data successful",
+      message: "User update data successful",
     });
   } catch (error) {
-    next(createError("User delete not found", 400));
+    next(createError("User update not found", 400));
+  }
+};
+/**
+ * update user sttaus
+ * @param {*} req
+ * @param {*} res
+ */
+export const statusUpdateUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // update statuss user data
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        status: !status,
+      },
+      { new: true }
+    ).populate("role");
+
+    res.status(200).json({
+      user,
+      message: "User updated status successful",
+    });
+  } catch (error) {
+    next(createError("User status updated not found", 400));
   }
 };

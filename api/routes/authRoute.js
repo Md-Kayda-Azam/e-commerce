@@ -5,6 +5,7 @@ import {
   register,
   loggedInUser,
   makeHash,
+  activateAccount,
 } from "../controllers/authControllers.js";
 import tokenVerify from "../middlewares/verifyToken.js";
 
@@ -13,6 +14,7 @@ routes.post("/login", login);
 routes.post("/logout", logOut);
 routes.post("/hash", makeHash);
 routes.post("/register", register);
+routes.get("/activate/:token", activateAccount);
 
 routes.get("/me", tokenVerify, loggedInUser);
 

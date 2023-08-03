@@ -76,7 +76,7 @@ const Permission = () => {
     <>
       <PageHeader title="Permission" />
 
-      <ModalPopup target="userModalPopup">
+      <ModalPopup target="userModalPopup" title="Add new permission">
         <form onSubmit={handleFormSubmit}>
           <div className="my-3">
             <label htmlFor="">Permission Name</label>
@@ -150,7 +150,10 @@ const Permission = () => {
                               </div>
                             </td>
 
-                            <td className="text-right">
+                            <td
+                              className="text-right"
+                              style={{ display: "flex" }}
+                            >
                               <button
                                 className="btn btn-small btn-danger"
                                 onClick={() => handleDeletePermission(item._id)}

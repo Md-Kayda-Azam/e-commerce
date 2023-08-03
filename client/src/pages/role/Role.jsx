@@ -12,6 +12,7 @@ import { createToast } from "../../helpers/toast";
 import {
   createRole,
   deleteRole,
+  updateRole,
   updateRoleStatusData,
 } from "../../features/user/userApiSlice";
 import { timeAgo } from "../../helpers/timeAgo";
@@ -28,6 +29,7 @@ const Role = () => {
   });
 
   const [selected, setSelected] = useState([]);
+
   const [roleEditData, setRoleditData] = useState({});
 
   const handleCheckBoxChange = (e) => {
@@ -81,8 +83,27 @@ const Role = () => {
   const handleEdit = (id) => {
     const data = role.find((data) => data._id == id);
     setRoleditData(data);
+    setSelected(data.permissions);
+  };
+  // handle edit role
+  const handleEditRoleChange = (e) => {
+    setRoleditData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
   };
 
+  //handleRoleUpdateSubmitForm
+  const handleRoleUpdateSubmitForm = (e) => {
+    e.preventDefault();
+    dispatch(
+      updateRole({
+        id: roleEditData._id,
+        name: roleEditData.name,
+        permissions: selected,
+      })
+    );
+  };
   // validation
   useEffect(() => {
     if (error) {
@@ -102,7 +123,7 @@ const Role = () => {
     <>
       <PageHeader title="Roles" />
 
-      <ModalPopup target="userModalPopup">
+      <ModalPopup target="userModalPopup" title="Add new role">
         <form onSubmit={handleSubmitForm}>
           <div className="my-3">
             <label htmlFor="">Role Name</label>
@@ -137,8 +158,8 @@ const Role = () => {
           </div>
         </form>
       </ModalPopup>
-      <ModalPopup target="roleModalPopup">
-        <form onSubmit={handleSubmitForm}>
+      <ModalPopup target="roleModalPopup" title="Update role">
+        <form onSubmit={handleRoleUpdateSubmitForm}>
           <div className="my-3">
             <label htmlFor="">Role Name</label>
             <input
@@ -146,7 +167,7 @@ const Role = () => {
               className="form-control"
               name="name"
               value={roleEditData.name}
-              onChange={handleInputChange}
+              onChange={handleEditRoleChange}
             />
           </div>
           <div className="my-3">
@@ -157,7 +178,7 @@ const Role = () => {
                   <input
                     type="checkbox"
                     value={item.name}
-                    checked={roleEditData?.permissions?.includes(item.name)}
+                    checked={selected?.includes(item.name)}
                     onChange={handleCheckBoxChange}
                   />{" "}
                   {item.name}

@@ -23,8 +23,9 @@ const userSchama = mongoose.Schema(
       trim: true,
     },
     role: {
-      type: String,
-      default: "Author",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
+      required: true,
     },
     photo: {
       type: String,

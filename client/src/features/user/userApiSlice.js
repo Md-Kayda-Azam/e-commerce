@@ -132,3 +132,99 @@ export const createRole = createAsyncThunk("user/createRole", async (data) => {
     throw new Error(error.response.data.message);
   }
 });
+// update role
+export const updateRole = createAsyncThunk("user/updateRole", async (data) => {
+  try {
+    const response = await axios.put(
+      `http://localhost:5050/api/v1/role/${data.id}`,
+      data,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+});
+// create user
+export const createUser = createAsyncThunk("user/createUser", async (data) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:5050/api/v1/user",
+      data,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+});
+// get all users
+export const getAllUsers = createAsyncThunk("user/getAllUsers", async () => {
+  try {
+    const response = await axios.get(
+      "http://localhost:5050/api/v1/user",
+
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+});
+// delete user
+export const deleteUser = createAsyncThunk("user/deleteUser", async (id) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:5050/api/v1/user/${id}`,
+
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+});
+// Update User Status Data
+export const updateUserStatusData = createAsyncThunk(
+  "user/updateUserStatusData",
+  async ({ id, status }) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5050/api/v1/user/${id}`,
+        { status },
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);
+// Update User Status Data
+export const updateUser = createAsyncThunk(
+  "user/updateUserUpdate",
+  async (data) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5050/api/v1/user/${data.id}`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);

@@ -213,7 +213,7 @@ const Header = () => {
                 </div>
                 <div className="user-text">
                   <h6>{user?.name}</h6>
-                  <p className="text-muted mb-0">{user?.role}</p>
+                  <p className="text-muted mb-0">{user?.role?.name}</p>
                 </div>
               </div>
               <Link className="dropdown-item" to="/profile">

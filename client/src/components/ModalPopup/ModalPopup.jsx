@@ -1,13 +1,13 @@
 import { Modal } from "@rakan/bootstrap4rtl";
 
-const ModalPopup = ({ target, children }) => {
+const ModalPopup = ({ target, children, title }) => {
   return (
     <>
       <div className="modal fade" id={target} aria-hidden="true" role="dialog">
         <div className="modal-dialog modal-dialog-centered" role="document">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">Add Specialities</h5>
+              <h5 className="modal-title">{title}</h5>
               <button
                 type="button"
                 className="close"

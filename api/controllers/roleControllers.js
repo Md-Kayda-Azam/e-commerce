@@ -95,7 +95,7 @@ export const deleteRole = async (req, res, next) => {
 export const updatedRole = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name } = req.body;
+    const { name, permissions } = req.body;
 
     // update Role data
     const role = await Role.findByIdAndUpdate(
@@ -103,13 +103,14 @@ export const updatedRole = async (req, res, next) => {
       {
         name,
         slug: slugCreate(name),
+        permissions: permissions,
       },
       { new: true }
     );
 
     res.status(200).json({
       role,
-      message: "Role delete data successful",
+      message: "Role updated successful",
     });
   } catch (error) {
     next(createError("Role update not found", 400));
