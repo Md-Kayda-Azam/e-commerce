@@ -55,7 +55,7 @@ const Register = () => {
       createToast(message, "success");
       dispatch(setMessageEmpty());
     }
-  }, [error, message]);
+  }, [error, message, dispatch]);
 
   return (
     <>

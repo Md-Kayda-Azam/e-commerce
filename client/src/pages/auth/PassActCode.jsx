@@ -1,32 +1,32 @@
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/img/logo-white.png";
 import { useEffect, useState } from "react";
-import { createToast } from "../../helpers/toast";
 import { useDispatch, useSelector } from "react-redux";
-import { isEmail } from "../../../../api/helper/validate";
-import { forgotPassword } from "../../features/auth/authApiSlice";
+import { CheckPaswordCode } from "../../features/auth/authApiSlice";
+import Cookies from "js-cookie";
+import { createToast } from "../../helpers/toast";
 import { setMessageEmpty } from "../../features/auth/authSlice";
 
-const ForgotPassword = () => {
+const PassActCode = () => {
   const { error, message } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   const naviagte = useNavigate();
+
   const [input, setInput] = useState("");
 
-  // handle submit
+  const email = Cookies.get("otp");
+
+  // handleSubmit
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    dispatch(CheckPaswordCode({ code: input, email: email }));
     if (!input) {
       createToast("Please feilds in the gap.");
     } else {
-      if (!isEmail(input)) {
-        createToast("Invalid email address!");
-      } else {
-        dispatch(forgotPassword({ email: input }));
-        setInput("");
-      }
+      dispatch(CheckPaswordCode({ email: input }));
+
+      setInput("");
     }
   };
   // validation
@@ -39,7 +39,7 @@ const ForgotPassword = () => {
     if (message) {
       createToast(message, "success");
       dispatch(setMessageEmpty());
-      naviagte("/recover-code");
+      naviagte(`/change-password`);
     }
   }, [error, message, dispatch, naviagte]);
   return (
@@ -53,9 +53,9 @@ const ForgotPassword = () => {
               </div>
               <div className="login-right">
                 <div className="login-right-wrap">
-                  <h1>Forgot Password?</h1>
+                  <h1>Forgot Password Check Activation Code?</h1>
                   <p className="account-subtitle">
-                    Enter your email to get a password reset link
+                    Enter your Code to get a password change form.
                   </p>
 
                   <form onSubmit={handleSubmit}>
@@ -64,8 +64,8 @@ const ForgotPassword = () => {
                         className="form-control"
                         type="text"
                         value={input}
+                        placeholder="Code"
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder="Email"
                       />
                     </div>
                     <div className="form-group mb-0">
@@ -73,7 +73,7 @@ const ForgotPassword = () => {
                         className="btn btn-primary btn-block"
                         type="submit"
                       >
-                        Reset Password
+                        Confirm
                       </button>
                     </div>
                   </form>
@@ -91,4 +91,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default PassActCode;

@@ -1,9 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
+  ChangePasswordReset,
+  CheckPaswordCode,
   createUser,
+  forgotPassword,
   getLoginUser,
   logOutUser,
   loginUser,
+  profilePasswordChange,
+  profileUpdate,
 } from "./authApiSlice";
 
 // create auth slice
@@ -57,6 +62,36 @@ const authSlice = createSlice({
       })
       .addCase(getLoginUser.fulfilled, (state, action) => {
         state.user = action.payload;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(forgotPassword.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+      })
+      .addCase(CheckPaswordCode.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(CheckPaswordCode.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+      })
+      .addCase(ChangePasswordReset.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(ChangePasswordReset.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+      })
+      .addCase(profilePasswordChange.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(profilePasswordChange.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+      })
+      .addCase(profileUpdate.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(profileUpdate.fulfilled, (state, action) => {
+        state.message = action.payload.message;
       });
   },
 });

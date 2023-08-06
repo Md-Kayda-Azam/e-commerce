@@ -1,32 +1,40 @@
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/img/logo-white.png";
-import { useEffect, useState } from "react";
+import useFormFrilds from "../../hooks/inputFeildsForm";
+import Cookies from "js-cookie";
 import { createToast } from "../../helpers/toast";
 import { useDispatch, useSelector } from "react-redux";
-import { isEmail } from "../../../../api/helper/validate";
-import { forgotPassword } from "../../features/auth/authApiSlice";
+import { ChangePasswordReset } from "../../features/auth/authApiSlice";
+import { useEffect } from "react";
 import { setMessageEmpty } from "../../features/auth/authSlice";
 
-const ForgotPassword = () => {
+const ChangePassword = () => {
   const { error, message } = useSelector((state) => state.auth);
 
-  const dispatch = useDispatch();
   const naviagte = useNavigate();
-  const [input, setInput] = useState("");
+  const dispatch = useDispatch();
+  const code = Cookies.get("cpcode");
+  const id = Cookies.get("cpid");
 
-  // handle submit
+  const [input, handleInputChange, resetForm] = useFormFrilds({
+    password: "",
+    cPassword: "",
+  });
+
+  // handleSubmit
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!input) {
-      createToast("Please feilds in the gap.");
+    if (!input.password || !input.cpassword) {
+      createToast("All fields are required", "error");
+    } else if (input.password != input.cpassword) {
+      createToast("Password not match", "warn");
     } else {
-      if (!isEmail(input)) {
-        createToast("Invalid email address!");
-      } else {
-        dispatch(forgotPassword({ email: input }));
-        setInput("");
-      }
+      dispatch(
+        ChangePasswordReset({ code: code, id: id, password: input.cpassword })
+      );
+      Cookies.remove("tokenCheck");
+      resetForm();
     }
   };
   // validation
@@ -39,7 +47,7 @@ const ForgotPassword = () => {
     if (message) {
       createToast(message, "success");
       dispatch(setMessageEmpty());
-      naviagte("/recover-code");
+      naviagte("/login");
     }
   }, [error, message, dispatch, naviagte]);
   return (
@@ -53,19 +61,28 @@ const ForgotPassword = () => {
               </div>
               <div className="login-right">
                 <div className="login-right-wrap">
-                  <h1>Forgot Password?</h1>
-                  <p className="account-subtitle">
-                    Enter your email to get a password reset link
-                  </p>
+                  <h1>Change Password</h1>
+                  <p className="account-subtitle">Enter your new password.</p>
 
                   <form onSubmit={handleSubmit}>
                     <div className="form-group">
                       <input
                         className="form-control"
                         type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="Email"
+                        name="password"
+                        value={input.password}
+                        onChange={handleInputChange}
+                        placeholder="New Password"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        className="form-control"
+                        type="text"
+                        name="cpassword"
+                        value={input.cpassword}
+                        onChange={handleInputChange}
+                        placeholder="Confirm New Password"
                       />
                     </div>
                     <div className="form-group mb-0">
@@ -73,7 +90,7 @@ const ForgotPassword = () => {
                         className="btn btn-primary btn-block"
                         type="submit"
                       >
-                        Reset Password
+                        Confirm
                       </button>
                     </div>
                   </form>
@@ -91,4 +108,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default ChangePassword;

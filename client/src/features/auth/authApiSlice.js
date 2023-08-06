@@ -64,3 +64,99 @@ export const getLoginUser = createAsyncThunk("auth/getLoginUser", async () => {
     throw new Error(error.response.data.message);
   }
 });
+/**
+ * Forgot password
+ */
+export const forgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
+  async (data) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5050/api/v1/auth/send-password-reset-opt",
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);
+/**
+ * Forgot password
+ */
+export const CheckPaswordCode = createAsyncThunk(
+  "auth/CheckPaswordCode",
+  async (data) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5050/api/v1/auth/check-password-reset-otp",
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);
+/**
+ * Forgot password
+ */
+export const ChangePasswordReset = createAsyncThunk(
+  "auth/ChangePasswordReset",
+  async (data) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5050/api/v1/auth/user-password-reset",
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);
+// Update User Status Data
+export const profilePasswordChange = createAsyncThunk(
+  "user/profilePasswordChange",
+  async (data) => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:5050/api/v1/auth/cp/${data.id}`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);
+// Update User Status Data
+export const profileUpdate = createAsyncThunk(
+  "user/profileUpdate",
+  async (data) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5050/api/v1/auth/profile-update/${data.id}`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);

@@ -1,4 +1,5 @@
 import { sendMail } from "../helper/sendMail.js";
+import { isEmail } from "../helper/validate.js";
 import User from "../models/User.js";
 import { createError } from "../utils/createError.js";
 import bcrypt from "bcrypt";

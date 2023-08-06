@@ -1,6 +1,65 @@
 import { Link } from "react-router-dom";
 import avater from "../../assets/img/profiles/avatar-01.jpg";
+import ModalPopup from "../../components/ModalPopup/ModalPopup";
+import useFormFrilds from "../../hooks/inputFeildsForm";
+import PasswordChange from "./PasswordChange";
+import { createToast } from "../../helpers/toast";
+import { getAuthData, setMessageEmpty } from "../../features/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { profileUpdate } from "../../features/auth/authApiSlice";
+
 const Profile = () => {
+  const { user, error, message } = useSelector(getAuthData);
+  const dispatch = useDispatch();
+  const [input, handleInputChange, resetForm] = useFormFrilds({
+    name: "",
+    email: "",
+    mobile: "",
+    gender: "",
+    city: "",
+    country: "",
+  });
+
+  /// handleSubmit
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (
+      !input.name ||
+      !input.email ||
+      !input.mobile ||
+      !input.gender ||
+      !input.city ||
+      !input.country
+    ) {
+      createToast("All fields are required", "error");
+    } else {
+      dispatch(
+        profileUpdate({
+          id: user._id,
+          name: input.name,
+          email: input.email,
+          mobile: input.mobile,
+          gender: input.gender,
+          city: input.city,
+          country: input.country,
+        })
+      );
+      resetForm();
+    }
+  };
+  // validation
+  useEffect(() => {
+    if (error) {
+      createToast(error);
+      dispatch(setMessageEmpty());
+    }
+    if (message) {
+      createToast(message, "success");
+      dispatch(setMessageEmpty());
+    }
+  }, [error, message, dispatch]);
   return (
     <>
       <div className="content container-fluid" style={{ padding: "0px" }}>
@@ -43,11 +102,6 @@ const Profile = () => {
                     aliqua.
                   </div>
                 </div>
-                <div className="col-auto profile-btn">
-                  <a href="#" className="btn btn-primary">
-                    Edit
-                  </a>
-                </div>
               </div>
             </div>
             <div className="profile-menu">
@@ -82,6 +136,7 @@ const Profile = () => {
                           <span>Personal Details</span>
                           <a
                             className="edit-link"
+                            data-target="#userEditModalPopup"
                             data-toggle="modal"
                             href="#edit_personal_details"
                           >
@@ -90,221 +145,131 @@ const Profile = () => {
                         </h5>
                         <div className="row">
                           <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                            Name
+                            Name :
                           </p>
                           <p className="col-sm-10">John Doe</p>
                         </div>
+
                         <div className="row">
                           <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                            Date of Birth
-                          </p>
-                          <p className="col-sm-10">24 Jul 1983</p>
-                        </div>
-                        <div className="row">
-                          <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                            Email ID
+                            Email :
                           </p>
                           <p className="col-sm-10">johndoe@example.com</p>
                         </div>
                         <div className="row">
                           <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                            Mobile
+                            Mobile :
                           </p>
                           <p className="col-sm-10">305-310-5857</p>
                         </div>
                         <div className="row">
+                          <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                            Gender :
+                          </p>
+                          <p className="col-sm-10">Male</p>
+                        </div>
+                        <div className="row">
+                          <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                            City :
+                          </p>
+                          <p className="col-sm-10">Dinajpur</p>
+                        </div>
+                        <div className="row">
                           <p className="col-sm-2 text-muted text-sm-right mb-0">
-                            Address
+                            Country :
                           </p>
-                          <p className="col-sm-10 mb-0">
-                            4663 Agriculture Lane,
-                            <br />
-                            Miami,
-                            <br />
-                            Florida - 33165,
-                            <br />
-                            United States.
-                          </p>
+                          <p className="col-sm-10 mb-0">Bangladesh</p>
                         </div>
                       </div>
                     </div>
 
-                    <div
-                      className="modal fade"
-                      id="edit_personal_details"
-                      aria-hidden="true"
-                      role="dialog"
+                    <ModalPopup
+                      target="userEditModalPopup"
+                      title="Add new permission"
                     >
-                      <div
-                        className="modal-dialog modal-dialog-centered"
-                        role="document"
-                      >
-                        <div className="modal-content">
-                          <div className="modal-header">
-                            <h5 className="modal-title">Personal Details</h5>
-                            <button
-                              type="button"
-                              className="close"
-                              data-dismiss="modal"
-                              aria-label="Close"
-                            >
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div className="modal-body">
-                            <form>
-                              <div className="row form-row">
-                                <div className="col-12 col-sm-6">
-                                  <div className="form-group">
-                                    <label>First Name</label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      value="John"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="col-12 col-sm-6">
-                                  <div className="form-group">
-                                    <label>Last Name</label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      value="Doe"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="col-12">
-                                  <div className="form-group">
-                                    <label>Date of Birth</label>
-                                    <div className="cal-icon">
-                                      <input
-                                        type="text"
-                                        className="form-control"
-                                        value="24-07-1983"
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="col-12 col-sm-6">
-                                  <div className="form-group">
-                                    <label>Email ID</label>
-                                    <input
-                                      type="email"
-                                      className="form-control"
-                                      value="johndoe@example.com"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="col-12 col-sm-6">
-                                  <div className="form-group">
-                                    <label>Mobile</label>
-                                    <input
-                                      type="text"
-                                      value="+1 202-555-0125"
-                                      className="form-control"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="col-12">
-                                  <h5 className="form-title">
-                                    <span>Address</span>
-                                  </h5>
-                                </div>
-                                <div className="col-12">
-                                  <div className="form-group">
-                                    <label>Address</label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      value="4663 Agriculture Lane"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="col-12 col-sm-6">
-                                  <div className="form-group">
-                                    <label>City</label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      value="Miami"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="col-12 col-sm-6">
-                                  <div className="form-group">
-                                    <label>State</label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      value="Florida"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="col-12 col-sm-6">
-                                  <div className="form-group">
-                                    <label>Zip Code</label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      value="22434"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="col-12 col-sm-6">
-                                  <div className="form-group">
-                                    <label>Country</label>
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      value="United States"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                              <button
-                                type="submit"
-                                className="btn btn-primary btn-block"
-                              >
-                                Save Changes
-                              </button>
-                            </form>
-                          </div>
+                      <form onSubmit={handleSubmit}>
+                        <div className="my-3">
+                          <label htmlFor="">Name</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="name"
+                            value={input.name}
+                            onChange={handleInputChange}
+                          />
                         </div>
-                      </div>
-                    </div>
+                        <div className="my-3">
+                          <label htmlFor="">Email</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="email"
+                            value={input.email}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        <div className="my-3">
+                          <label htmlFor="">Mobile</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="mobile"
+                            value={input.mobile}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        <div className="my-3">
+                          <label htmlFor="">City</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="city"
+                            value={input.city}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        <div className="my-3">
+                          <label htmlFor="">Country</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="country"
+                            value={input.country}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        <div className="my-3">
+                          <label htmlFor="">Gender</label>
+                          <select
+                            id="gender"
+                            name="gender"
+                            className="form-control"
+                            value={input.gender}
+                            onChange={handleInputChange}
+                          >
+                            <option value="none" selected>
+                              Gender
+                            </option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                          </select>
+                        </div>
+
+                        <div className="my-3">
+                          <button
+                            className="btn btn-primary btn-block"
+                            type="submit"
+                          >
+                            Add new permission
+                          </button>
+                        </div>
+                      </form>
+                    </ModalPopup>
                   </div>
                 </div>
               </div>
 
-              <div id="password_tab" className="tab-pane fade">
-                <div className="card">
-                  <div className="card-body">
-                    <h5 className="card-title">Change Password</h5>
-                    <div className="row">
-                      <div className="col-md-10 col-lg-6">
-                        <form>
-                          <div className="form-group">
-                            <label>Old Password</label>
-                            <input type="password" className="form-control" />
-                          </div>
-                          <div className="form-group">
-                            <label>New Password</label>
-                            <input type="password" className="form-control" />
-                          </div>
-                          <div className="form-group">
-                            <label>Confirm Password</label>
-                            <input type="password" className="form-control" />
-                          </div>
-                          <button className="btn btn-primary" type="submit">
-                            Save Changes
-                          </button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <PasswordChange />
             </div>
           </div>
         </div>

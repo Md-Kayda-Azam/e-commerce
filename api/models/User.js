@@ -25,9 +25,16 @@ const userSchama = mongoose.Schema(
     role: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Role",
-      required: true,
     },
     photo: {
+      type: String,
+      default: null,
+    },
+    city: {
+      type: String,
+      default: null,
+    },
+    country: {
       type: String,
       default: null,
     },
@@ -35,6 +42,9 @@ const userSchama = mongoose.Schema(
       type: String,
       enum: ["Male", "Female", "undefined"],
       default: "undefined",
+    },
+    access_token: {
+      type: String,
     },
     isActivate: {
       type: Boolean,
